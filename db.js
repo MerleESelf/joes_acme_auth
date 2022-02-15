@@ -85,7 +85,6 @@ const syncAndSeed = async () => {
 
   const notes = [
     { text: 'Remember to take out trash' },
-    { text: 'Wash dished' },
     { text: 'Walk dog' },
   ];
 

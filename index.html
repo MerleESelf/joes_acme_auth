@@ -50,15 +50,20 @@
             constructor() {
                 super();
                 this.state = {
-                    auth: {}
+                    auth: {},
+                    notes: [],
                 };
                 this.signIn = this.signIn.bind(this);
                 this.logout = this.logout.bind(this);
+
             }
             logout() {
                 window.localStorage.removeItem('token');
                 this.setState({ auth: {} });
             }
+
+            
+
             async attemptTokenLogin() {
                 // We are getting a possible id of a user from localStorage
                 const token = window.localStorage.getItem('token');
@@ -70,11 +75,17 @@
                             authorization: token
                         }
                     });
-                    this.setState({ auth: response.data });
+                    const notesForUser = await axios.get(`/api/users/${response.data.id}/notes`)
+
+                    this.setState({ auth: response.data, notes: notesForUser.data});
+
+                    
+                    this.setState({ notes: notes })
                 }
             }
             componentDidMount() {
                 this.attemptTokenLogin();
+               
             }
             async signIn(credentials) {
                 let response = await axios.post('/api/auth', credentials);
@@ -83,11 +94,13 @@
                 window.localStorage.setItem('token', token);
                 this.attemptTokenLogin();
             }
+
             render() {
+                console.log('state here', this.state)
                 const { auth } = this.state;
                 const { signIn, logout } = this;
                 if (!auth.id) {
-                    return <SignIn signIn={signIn} />
+                    return <SignIn signIn={signIn}  />
                 }
                 else {
                     return (
